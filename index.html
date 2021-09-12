@@ -13,8 +13,8 @@
 
 	<body>
 		<h2>Local</h2>
-		<video id="localVideo" autoplay playsinline></video>
-		<video id="localScreen" autoplay playsinline></video>
+		<video id="localVideo" autoplay playsinline muted></video>
+		<video id="localScreen" autoplay playsinline muted></video>
 		<h2>Remote</h2>
 		<video id="remoteVideo" autoplay playsinline></video>
 		<video id="remoteScreen" autoplay playsinline></video>
@@ -84,7 +84,7 @@
 				.catch(logError);
 			
 			// get video screen stream
-			navigator.mediaDevices.getDisplayMedia(deviceStreamConstrains)
+			navigator.mediaDevices.getDisplayMedia(mediaStreamConstraints)
 			.then((mediaStream) => {
 				localScreen.srcObject = mediaStream
 
