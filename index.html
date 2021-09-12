@@ -12,9 +12,12 @@
 	</head>
 
 	<body>
-
+		<h2>Local</h2>
 		<video id="localVideo" autoplay playsinline></video>
+		<video id="localScreen" autoplay playsinline></video>
+		<h2>Remote</h2>
 		<video id="remoteVideo" autoplay playsinline></video>
+		<video id="remoteScreen" autoplay playsinline></video>
 
 		<div>
 			<p>
@@ -34,12 +37,14 @@
 		<script type="text/javascript">
 			'use strict';
 
-			const mediaStreamConstraints = {video: true};
+			const mediaStreamConstraints = {video: true, audio: true};
 			const offerOptions = {offerToReceiveVideo:1};
 			const servers = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 			const localVideo = document.getElementById('localVideo');
 			const remoteVideo = document.getElementById('remoteVideo');
+			const localScreen = document.getElementById('localScreen');
+			const remoteScreen = document.getElementById('remoteScreen');
 
 			const localOffer = document.getElementById('localOffer');
 			const remoteOffer = document.getElementById('remoteOffer');
@@ -69,7 +74,6 @@
 			// get the video media stream
 			navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
 				.then((mediaStream) => {
-				
 					localVideo.srcObject = mediaStream;
 
 					for (const track of mediaStream.getTracks())
@@ -77,6 +81,17 @@
 					}
 				)
 				.catch(logError);
+			
+			// get video screen stream
+			navigator.mediaDevices.getDisplayMedia(mediaStreamConstraints)
+			.then((mediaStream) => {
+				localScreen.srcObject = mediaStream
+
+				for (const track of mediaStream.getTracks())
+						peerMediaStream.addTrack(track);
+					}
+			)
+			.catch(logError);
 	
 			function handleConnection(event) {
 
@@ -99,11 +114,23 @@
 					}
 				}
 			}
+
+			function getDisplayMedia(mediaOptions) {
+				return navigator.mediaDevices.getDisplayMedia(mediaOptions)
+				.catch(logError)
+			}
 					
 			function gotRemoteMediaStream(event) {
-
 				const mediaStream = event.stream;
+				const screenStream = mediaStream.clone();
+				// Remove screen track
+				mediaStream.removeTrack(mediaStream.getVideoTracks()[1]);
 				remoteVideo.srcObject = mediaStream;
+
+				// Remove video track
+				screenStream.removeTrack(screenStream.getVideoTracks()[0]);
+				remoteScreen.srcObject = screenStream;
+				
 				console.log('remote peer connection received remote stream')
 			}
 
