@@ -38,6 +38,7 @@
 			'use strict';
 
 			const mediaStreamConstraints = {video: true, audio: true};
+			const deviceStreamConstrains = { video: true }
 			const offerOptions = {offerToReceiveVideo:1};
 			const servers = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
@@ -83,7 +84,7 @@
 				.catch(logError);
 			
 			// get video screen stream
-			navigator.mediaDevices.getDisplayMedia(mediaStreamConstraints)
+			navigator.mediaDevices.getDisplayMedia(deviceStreamConstrains)
 			.then((mediaStream) => {
 				localScreen.srcObject = mediaStream
 
