@@ -38,7 +38,6 @@
 			'use strict';
 
 			const mediaStreamConstraints = {video: true, audio: true};
-			const deviceStreamConstrains = { video: true }
 			const offerOptions = {offerToReceiveVideo:1};
 			const servers = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
@@ -124,12 +123,16 @@
 			function gotRemoteMediaStream(event) {
 				const mediaStream = event.stream;
 				const screenStream = mediaStream.clone();
+
+				if(mediaStream.getVideoTracks().length > 1) {
 				// Remove screen track
 				mediaStream.removeTrack(mediaStream.getVideoTracks()[1]);
-				remoteVideo.srcObject = mediaStream;
-
+				
 				// Remove video track
 				screenStream.removeTrack(screenStream.getVideoTracks()[0]);
+				}
+
+				remoteVideo.srcObject = mediaStream;
 				remoteScreen.srcObject = screenStream;
 				
 				console.log('remote peer connection received remote stream')
